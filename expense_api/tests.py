@@ -3,6 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from .factories import ExpenseFactory
+
 
 # Create your tests here.
 class ExpenseTest(TestCase):
@@ -18,10 +20,12 @@ class ExpenseTest(TestCase):
         }
 
         res = self.clent.post(url, payload, format="json")
+        # breakpoint()
         json_resp = res.json()
         # saves res as a json object
 
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        # equivalent to self.assertEqual(201, res.status_code)
         # checks availability of url
 
         self.assertEqual(payload["amount"], json_resp["amount"])
@@ -31,3 +35,21 @@ class ExpenseTest(TestCase):
 
         self.assertIsInstance(json_resp["id"], int)
         # checks existence of id of type Instance of an integer
+
+    def test_list_expense(self):
+        expense = ExpenseFactory()
+        # creates record in test database by calling Expensefactory from factories.py
+
+        url = reverse("expense_api:expense-list-create")
+        # expense-list-create handles creating and listing of records
+        res = self.clent.get(url, format="json")
+        # extracts a number of records
+
+        json_resp = res.json()
+        # breakpoint()
+
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual(expense.amount, json_resp[0]["amount"])
+        self.assertEqual(expense.merchant, json_resp[0]["merchant"])
+        self.assertEqual(expense.description, json_resp[0]["description"])
+
