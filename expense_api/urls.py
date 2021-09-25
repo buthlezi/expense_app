@@ -6,6 +6,11 @@ from . import views
 
 urlpatterns = [
     path(
-        "expenses/", views.ExpensesListCreateView.as_view(), name="expense-list-create"
-    )
+        "expenses/", views.ExpenseListCreateView.as_view(), name="expense-list-create"
+    ),
+    path(
+        "expenses/<str:pk>",  # always has a primary key
+        views.ExpenseRetrieveUpdateDestroyView.as_view(),
+        name="expense-retrieve-update-destroy",
+    ),
 ]

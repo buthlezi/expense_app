@@ -36,7 +36,7 @@ class ExpenseTest(TestCase):
         self.assertIsInstance(json_resp["id"], int)
         # checks existence of id of type Instance of an integer
 
-    def test_list_expense(self):
+    def test_list_expenses(self):
         expense = ExpenseFactory()
         # creates record in test database by calling Expensefactory from factories.py
 
@@ -53,3 +53,18 @@ class ExpenseTest(TestCase):
         self.assertEqual(expense.merchant, json_resp[0]["merchant"])
         self.assertEqual(expense.description, json_resp[0]["description"])
 
+    def test_retrieve_expenses(self):
+        expense = ExpenseFactory()  # create records in test database
+
+        url = reverse("expense_api:expense-retrieve-update-destroy", args=[expense.id])
+
+        res = self.clent.get(
+            url, format="json"
+        )  # expense.id used to find a particular record
+        json_resp = res.json()
+
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        # check that retrieved record (JSON object) matches the created record
+        self.assertEqual(expense.amount, json_resp["amount"])
+        self.assertEqual(expense.merchant, json_resp["merchant"])
+        self.assertEqual(expense.description, json_resp["description"])
