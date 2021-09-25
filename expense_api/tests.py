@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from .factories import ExpenseFactory
+from .models import Expense
 
 
 # Create your tests here.
@@ -53,7 +54,7 @@ class ExpenseTest(TestCase):
         self.assertEqual(expense.merchant, json_resp[0]["merchant"])
         self.assertEqual(expense.description, json_resp[0]["description"])
 
-    def test_retrieve_expenses(self):
+    def test_retrieve_expense(self):
         expense = ExpenseFactory()  # create records in test database
 
         url = reverse("expense_api:expense-retrieve-update-destroy", args=[expense.id])
@@ -68,3 +69,18 @@ class ExpenseTest(TestCase):
         self.assertEqual(expense.amount, json_resp["amount"])
         self.assertEqual(expense.merchant, json_resp["merchant"])
         self.assertEqual(expense.description, json_resp["description"])
+
+    def test_delete_expense(self):
+        expense = ExpenseFactory()
+
+        url = reverse("expense_api:expense-retrieve-update-destroy", args=[expense.id])
+
+        res = self.clent.delete(
+            url, format="json"
+        )  # delete record with id supplied in line 75
+
+        self.assertEqual(status.HTTP_204_NO_CONTENT, res.status_code)
+        # assert that record disappears after deletion
+        self.assertFalse(Expense.objects.filter(id=expense.id))
+        # assert that record cannot be found after deletion
+
