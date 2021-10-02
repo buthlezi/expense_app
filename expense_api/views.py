@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from expense_api.factories import ExpenseFactory
+
 from .models import Expense
 from .serializers import ExpenseSerializer
 
@@ -39,3 +41,17 @@ class ExpenseRetrieveUpdateDestroyView(APIView):
         expense = get_object_or_404(Expense, id=pk)
         expense.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, pk):
+        expense = get_object_or_404(Expense, id=pk)  # fetch record to be updated
+        serializer = ExpenseSerializer(
+            expense, data=request.data
+        )  # pass original data and payload data
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_200_OK
+            )  # return updated data
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # otherwise return error
+
