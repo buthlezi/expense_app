@@ -15,4 +15,3 @@ class ExpenseFactory(factory.django.DjangoModelFactory):
     # random  number btwn 5.0 and 95.5 rounded to 2 dp
     merchant = factory.Faker("company")
     description = factory.Faker("paragraph")
-

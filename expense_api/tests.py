@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+from rest_framework_api_key.models import APIKey
 
 from .factories import ExpenseFactory
 from .models import Expense
@@ -10,7 +11,10 @@ from .models import Expense
 # Create your tests here.
 class ExpenseTest(TestCase):
     def setUp(self):
-        self.clent = APIClient()  # self.clent is an instance variable
+        self.client = APIClient()  # self.client is an instance variable
+        api_key, key = APIKey.objects.create_key(name="expense-service")
+        # object, key = APIKey.obj....")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Api-Key {key}")
 
     def test_create_expense(self):
         url = reverse("expense_api:expense-list-create")
@@ -20,7 +24,7 @@ class ExpenseTest(TestCase):
             "description": "Django Rest Framework Book",
         }
 
-        res = self.clent.post(url, payload, format="json")
+        res = self.client.post(url, payload, format="json")
         # breakpoint()
         json_resp = res.json()
         # saves res as a json object
@@ -43,7 +47,7 @@ class ExpenseTest(TestCase):
 
         url = reverse("expense_api:expense-list-create")
         # expense-list-create handles creating and listing of records
-        res = self.clent.get(url, format="json")
+        res = self.client.get(url, format="json")
         # extracts a number of records
 
         json_resp = res.json()
@@ -59,7 +63,7 @@ class ExpenseTest(TestCase):
 
         url = reverse("expense_api:expense-retrieve-update-destroy", args=[expense.id])
 
-        res = self.clent.get(
+        res = self.client.get(
             url, format="json"
         )  # expense.id used to find a particular record
         json_resp = res.json()
@@ -75,7 +79,7 @@ class ExpenseTest(TestCase):
 
         url = reverse("expense_api:expense-retrieve-update-destroy", args=[expense.id])
 
-        res = self.clent.delete(
+        res = self.client.delete(
             url, format="json"
         )  # delete record with id supplied in line 75
 
@@ -94,7 +98,7 @@ class ExpenseTest(TestCase):
             "description": "Django Rest Framework Book",
         }
         # replace record created in line 88 with above payload
-        res = self.clent.put(url, payload, fomat="json")
+        res = self.client.put(url, payload, fomat="json")
 
         updated_expense = Expense.objects.get(id=expense.id)
 
@@ -117,7 +121,7 @@ class ExpenseTest(TestCase):
             "description": "Django Rest Framework Book",
         }
 
-        res = self.clent.put(url, payload, fomat="json")
+        res = self.client.put(url, payload, fomat="json")
         json_resp = res.json()
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
