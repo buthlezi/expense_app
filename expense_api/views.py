@@ -1,10 +1,12 @@
 # from django.shortcuts import get_object_or_404
 # from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from .models import Expense
 from .serializers import ExpenseSerializer
+
+# from rest_framework_api_key.permissions import HasAPIKey
+
 
 # from expense_api.factories import ExpenseFactory
 
@@ -37,7 +39,7 @@ class ExpenseListCreateView(ListCreateAPIView):
     # replace with:
     serializer_class = ExpenseSerializer
     queryset = Expense.objects.all()
-    permission_classes = [HasAPIKey]
+    # permission_classes = [HasAPIKey]
 
 
 # class ExpenseRetrieveUpdateDestroyView(APIView):
@@ -70,4 +72,4 @@ class ExpenseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     # replace with:
     serializer_class = ExpenseSerializer
     queryset = Expense.objects.all()
-    permission_classes = [HasAPIKey]
+    # permission_classes = [HasAPIKey]
