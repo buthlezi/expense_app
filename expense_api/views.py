@@ -53,6 +53,10 @@ class ExpenseListCreateView(ListCreateAPIView):
     queryset = Expense.objects.all()
     # permission_classes = [HasAPIKey]
 
+    # protection added below
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
 # class ExpenseRetrieveUpdateDestroyView(APIView):
 # replace with:
@@ -85,6 +89,10 @@ class ExpenseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = ExpenseSerializer
     queryset = Expense.objects.all()
     # permission_classes = [HasAPIKey]
+
+    # protection added below
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class RegistrationCreateView(CreateAPIView):

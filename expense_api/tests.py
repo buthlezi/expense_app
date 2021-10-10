@@ -19,6 +19,13 @@ class ExpenseTest(TestCase):
         # # object, key = APIKey.obj....")
         # self.client.credentials(HTTP_AUTHORIZATION=f"Api-Key {key}")
 
+        # code added below after protections added to ExpenseListCreateView
+        # and ExpenseRetrieveUpdateDestroyView in views.py - to ensure
+        # that all 6 failing tests below will pass
+        self.user = UserFactory(password="password123")
+        payload = {"username": self.user.username, "password": "password123"}
+        self.client.post(reverse("expense_api:session-create"), payload, format="json")
+
     def test_create_expense(self):
         url = reverse("expense_api:expense-list-create")
         payload = {
