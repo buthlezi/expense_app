@@ -19,4 +19,9 @@ urlpatterns = [
         name="registration-create",
     ),
     path("sessions/", views.SessionCreateView.as_view(), name="session-create"),
+    path(
+        "session/",
+        views.SessionRetrieveDestroyView.as_view(),
+        name="session-retrieve-destroy",
+    ),
 ]

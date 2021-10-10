@@ -8,10 +8,11 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
     get_object_or_404,
 )
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from expense_api.authentication import generate_access_token
+from expense_api.authentication import JWTAuthentication, generate_access_token
 
 from .models import Expense
 from .serializers import ExpenseSerializer, UserSerializer
@@ -112,3 +113,15 @@ class SessionCreateView(APIView):
         response.data = {"jwt": token}
 
         return response  # returns 'jwt': 'temptokenhere'
+
+
+class SessionRetrieveDestroyView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        # serialize user from get request
+        # user authenticated by auth_class and perm_classes
+        return Response({"data": serializer.data})
+        # data retrieved from serializer
