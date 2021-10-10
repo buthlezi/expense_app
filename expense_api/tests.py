@@ -212,3 +212,20 @@ class SessionRetrieveDestroyTest(TestCase):
         self.assertEqual(res.data["data"]["first_name"], self.user.first_name)
         self.assertEqual(res.data["data"]["last_name"], self.user.last_name)
         self.assertEqual(res.data["data"]["email"], self.user.email)
+
+    def test_delete_session(self):
+        # have to use a non-hashed version of password
+        payload = {"username": self.user.username, "password": "password123"}
+        # create session
+        self.client.post(reverse("expense_api:session-create"), payload, format="json")
+        # delete session
+        self.client.delete(
+            reverse("expense_api:session-retrieve-destroy"), format="json"
+        )
+        # attempt to retrieve session - this should fail 403 != 200 -
+        # until delete fxn is created in views.py
+        res = self.client.get(
+            reverse("expense_api:session-retrieve-destroy"), format="json"
+        )
+
+        self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)

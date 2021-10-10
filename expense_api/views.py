@@ -125,3 +125,12 @@ class SessionRetrieveDestroyView(APIView):
         # user authenticated by auth_class and perm_classes
         return Response({"data": serializer.data})
         # data retrieved from serializer
+
+    def delete(self, request):
+        response = Response()
+        response.delete_cookie(
+            key="jwt"
+        )  # delete cookie on user's browser that has 'jwt' key
+        response.data = {"message": "Logged out"}
+
+        return response
